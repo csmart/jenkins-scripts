@@ -3,6 +3,7 @@
 import os
 from qemu_simple_test import qemu_simple_test
 import urllib
+import hashlib
 
 
 class qemu_ubuntu_test(qemu_simple_test):
@@ -12,19 +13,31 @@ class qemu_ubuntu_test(qemu_simple_test):
                  image_size='16G', image_cow=True, seed='my-seed.img',
                  seedurl='http://ozlabs.org/~anton/my-seed.img',
                  imageurl='http://cloud-images.ubuntu.com/utopic/current/utopic\
-                    -server-cloudimg-ppc64el-disk1.img'):
+-server-cloudimg-ppc64el-disk1.img'):
 
+        # Verify our images first
+        if os.path.isfile(seed) is False \
+                or hashlib.sha1(open(seed, 'ro').read()).hexdigest() != \
+                "67758228a9d35927066a237f1a0e30d52e3db0f4":
+            print("Downloading seed..")
+            urllib.urlretrieve(seedurl, seed)
+        else:
+            print("Seed image looks good, continuing.")
+
+        if os.path.isfile(image) is False \
+                or hashlib.sha1(open(image, 'ro').read()).hexdigest() != \
+                "f909ae37774db893637aeccd9257863f5cbf3147":
+            print("Downloading image..")
+            urllib.urlretrieve(imageurl, image)
+        else:
+            print("Backing image looks good, continuing.")
+
+        # Now that we have our images, create our instance
         qemu_simple_test.__init__(self, qemu=qemu, memory=memory, cores=cores,
                                   threads=threads, kvm=kvm, virtio=virtio,
                                   kernel=kernel, initrd=initrd, cmdline=cmdline,
                                   image=image, image_size=image_size,
                                   image_cow=image_cow, seed=seed)
-
-        if os.path.isfile(seed) is False:
-            urllib.urlretrieve(seedurl, seed)
-
-        if os.path.isfile(image) is False:
-            urllib.urlretrieve(imageurl, image)
 
     def wait_for_login(self, timeout=300):
         self.expectcheck('ubuntu login:', timeout=timeout)
