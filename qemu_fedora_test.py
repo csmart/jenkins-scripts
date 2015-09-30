@@ -10,7 +10,7 @@ class qemu_fedora_test(qemu_simple_test):
     def __init__(self, qemu='qemu-system-ppc64', memory='4G', cores=1,
                  threads=1, kvm=False, virtio=False, kernel=None, initrd=None,
                  cmdline=None, image='Fedora-Cloud-Base-22-20150521-1.ppc64le.qcow2',
-                 image_size='16G', image_cow=True, seed='my-seed.img',
+                 image_size='16G', image_cow=True, seed='my-seed-fedora.img',
                  seedurl='http://ozlabs.org/~anton/my-seed.img',
                  imageurl='https://dl.fedoraproject.org/pub/fedora-secondary/\
 releases/22/Cloud_Images/ppc64le/Images/\
@@ -19,7 +19,7 @@ Fedora-Cloud-Base-22-20150521-1.ppc64le.qcow2'):
         # Make sure we have a valid seed file
         if os.path.isfile(seed) is False \
                 or hashlib.sha1(open(seed, 'ro').read()).hexdigest() != \
-                "87f18c2a0000be05bb4f094735a7ae4cc2f7621c":
+                "adcffcc80124760e550f8fca6e46499436dc8c40":
             print("Downloading seed..")
             urllib.urlretrieve(seedurl, seed)
         else:
