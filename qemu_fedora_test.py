@@ -5,6 +5,9 @@ from qemu_simple_test import qemu_simple_test
 import urllib
 import hashlib
 
+env_http_proxy = os.getenv('http_proxy', '')
+env_https_proxy = os.getenv('https_proxy', '')
+
 
 class qemu_fedora_test(qemu_simple_test):
     def __init__(self, qemu='qemu-system-ppc64', memory='4G', cores=1,
@@ -69,8 +72,8 @@ Fedora-Cloud-Base-22-20150521-1.ppc64le.qcow2'):
         self.wait_for_prompt(timeout=timeout)
 
         # more involved network test
-        self.child.sendline('curl --proxy http://proxy:3128\
-                            http://ozlabs.org/~anton/datafile > datafile')
+        self.child.sendline('curl --proxy "%s"\
+                            http://ozlabs.org/~anton/datafile > datafile' % (env_http_proxy))
         self.wait_for_prompt(timeout=timeout)
 
         self.child.sendline('md5sum datafile')
