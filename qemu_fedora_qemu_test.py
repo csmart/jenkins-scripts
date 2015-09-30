@@ -1,0 +1,21 @@
+#!/usr/bin/python
+
+import sys
+from qemu_fedora_test import qemu_fedora_test
+
+
+if len(sys.argv) != 2:
+    print "Usage: qemu_fedora_qemu_test.py qemu_binary"
+    sys.exit(1)
+
+qemu = sys.argv[1]
+
+print "Testing PAPR virtual IO"
+q = qemu_fedora_test(qemu=qemu, kvm=False)
+q.simple_test(timeout=1200)
+q.close()
+
+print "Testing virtio virtual IO"
+q = qemu_fedora_test(qemu=qemu, kvm=False, virtio=True)
+q.simple_test(timeout=1200)
+q.close()
